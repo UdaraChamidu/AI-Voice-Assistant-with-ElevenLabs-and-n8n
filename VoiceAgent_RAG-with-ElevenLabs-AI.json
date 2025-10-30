@@ -1,0 +1,241 @@
+{
+  "name": "Voice RAG Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "527ae3b7-da5c-4844-911f-f1d3c0e96059",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        48,
+        192
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "03EG8qKtl4rkhyYc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1b9f6792-2e47-46d4-8759-7b0a7557b0b0",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        624,
+        320
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "03EG8qKtl4rkhyYc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7ab8d09b-5785-4beb-b04d-5b456e61b765",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        352,
+        464
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "03EG8qKtl4rkhyYc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "20653dd4-635e-46fe-ba47-2e6bf6eff7bf",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        528,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.question }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant for answering user questions based on provided documents. When you need information from the documents, use the \"data\" tool to search the database. Always provide accurate, concise answers based only on the retrieved information.\n"
+        }
+      },
+      "id": "b35df562-906a-471c-826c-8f18023b902f",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        192,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "49722672-55e9-4d87-895f-ba9b1d540315",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "9c72a11f-5601-4a4c-ac23-26b3b7c20799",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "49722672-55e9-4d87-895f-ba9b1d540315"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n-rag-voice",
+          "mode": "list",
+          "cachedResultName": "n8n-rag-voice"
+        },
+        "options": {
+          "pineconeNamespace": "n8n-rag-voice"
+        }
+      },
+      "id": "a575225a-fad7-40c0-832c-e061e12bfa9b",
+      "name": "Pinecone Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        304,
+        320
+      ],
+      "credentials": {
+        "pineconeApi": {
+          "id": "vJZg9w2Z7kbMG1h7",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "data",
+        "description": "Retrieves information from provided document or database"
+      },
+      "id": "bff30671-66b1-495f-80eb-364ecbcdff8e",
+      "name": "data",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        448,
+        160
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "data",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "data",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0a0015ff-a060-452d-8117-c976abe7a7aa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c227a2be4bbc698a7a2286662474aabadfa7d724a4176d0ccd5019f80211e4fe"
+  },
+  "id": "zl95BeedvnyzYxCa",
+  "tags": []
+}
