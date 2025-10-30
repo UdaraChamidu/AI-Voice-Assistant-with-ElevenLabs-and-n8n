@@ -1,32 +1,72 @@
 # 🎙️ Voice RAG System
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![n8n](https://img.shields.io/badge/n8n-Workflow-FF6D5A?logo=n8n)](https://n8n.io)
-[![OpenAI](https://img.shields.io/badge/OpenAI-412991?logo=openai&logoColor=white)](https://openai.com)
-[![ElevenLabs](https://img.shields.io/badge/ElevenLabs-Voice-4A90E2)](https://elevenlabs.io)
-[![Pinecone](https://img.shields.io/badge/Pinecone-Vector_DB-00C896)](https://pinecone.io)
+> Ask questions to your documents using voice. Upload PDFs, speak your question, get spoken answers.
 
-> An intelligent voice-enabled RAG (Retrieval Augmented Generation) system that allows natural voice conversations with your documents. Upload PDFs, ask questions by speaking, and get accurate answers spoken back to you.
+## What It Does
 
-![Voice RAG Demo](demo.gif)
+- Upload PDF documents through a web interface
+- Ask questions using your voice (via ElevenLabs)
+- Get accurate answers based on your documents
+- Answers are spoken back to you
+
+## Tech Stack
+
+- **n8n** - Automation workflows
+- **Pinecone** - Vector database
+- **OpenAI** - AI language model
+- **ElevenLabs** - Voice AI
+
+## Quick Setup
+
+### 1. Pinecone
+- Create account at [pinecone.io](https://pinecone.io)
+- Create index: name `sample`, dimensions `512`, metric `cosine`
+
+### 2. n8n Workflows
+- Import `Data_to_Pinecone.json` (for document uploads)
+- Import `Voice-RAG-Agent.json` (for voice queries)
+- Add your OpenAI and Pinecone API keys
+
+### 3. ElevenLabs Agent
+- Create agent at [elevenlabs.io](https://elevenlabs.io)
+- Add webhook tool pointing to your n8n workflow
+- Use the provided system prompt
+
+### 4. Web Interface
+- Open `upload.html` in browser
+- Update webhook URL to your n8n instance
+- Start uploading documents
+
+## Usage
+
+1. **Upload**: Drag and drop PDF files to the web interface
+2. **Ask**: Speak your question to the ElevenLabs agent
+3. **Listen**: Get accurate answers from your documents
+
+## How It Works
+
+```
+PDF Upload → Text Extraction → Vector Embeddings → Pinecone Storage
+↓
+Voice Question → Vector Search → AI Response → Voice Answer
+```
+
+## Requirements
+
+- n8n instance (cloud or self-hosted)
+- OpenAI API key
+- ElevenLabs API key
+- Pinecone account
+
+## Future Plans
+
+- [ ] Text-based chat interface
+- [ ] Document management
 
 ---
 
-## ✨ Features
-
-- 🎤 **Natural Voice Interaction** - Ask questions using your voice and receive spoken answers
-- 📄 **Document Intelligence** - Upload PDFs and automatically process them into a searchable knowledge base
-- 🧠 **Smart Retrieval** - Semantic search powered by vector embeddings finds the most relevant information
-- 💬 **Context-Aware Responses** - AI generates accurate answers based only on your documents
-- 🌐 **Simple Web Interface** - Clean, modern UI for document uploads with drag-and-drop support
-- ⚡ **Real-Time Processing** - Fast response times with efficient vector search
-- 🔄 **Automated Workflows** - Two n8n workflows handle document ingestion and voice queries seamlessly
-
----
+**Built with ❤️ using n8n, OpenAI, ElevenLabs, and Pinecone**
 
 
-
-## 🏗️ Architecture
-
-### System Overview
+## How It Works
 
